@@ -1,3 +1,7 @@
+### protocol files, generated automatically ###
+message.js
+message.ts
+
 ### Node ###
 # Logs
 logs
