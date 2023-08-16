@@ -1,7 +1,7 @@
 {
   "name": "ccnet",
   "version": "1.0.0",
-  "description": "CC net",
+  "description": "CCnet server",
   "scripts": {
     "make": "npx tsc",
     "server": "node dist/server.js",
