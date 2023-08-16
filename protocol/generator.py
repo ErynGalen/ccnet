@@ -13,6 +13,18 @@ class Message:
 
 
 # main
+import sys
+
+if len(sys.argv) != 2:
+    print("Usage:")
+    print(sys.argv[0] + " [language]")
+    print("languages:")
+    print("  ts = Typescript")
+    exit()
+
+language = sys.argv[1]
+
+
 protocol_def = open("protocol.scm", "r")
 
 messages = []
@@ -88,12 +100,15 @@ for m in messages:
     message_id += 1
 
 
-ts_code = ""
-import ts_codegen as ts
+# codegen
+if language == "ts":
+    ts_code = ""
+    import ts_codegen as ts
 
-ts_code += ts.get_global_code()
-for m in messages:
-    ts_code += ts.get_message_code(m)
-ts_code += ts.get_decode_code(messages)
-
-print(ts_code)
+    ts_code += ts.get_global_code()
+    for m in messages:
+        ts_code += ts.get_message_code(m)
+    ts_code += ts.get_decode_code(messages)
+    print(ts_code)
+else:
+    print("Unsupported language:", language)
