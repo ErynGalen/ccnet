@@ -9,7 +9,7 @@ def get_global_code():
     code += "    if (n < 10) {\n"
     code += "        return String.fromCharCode(n + \"0\".charCodeAt(0));\n"
     code += "    } else {\n"
-    code += "        return String.fromCharCode(n + \"a\".charCodeAt(0));\n"
+    code += "        return String.fromCharCode(n - 10 + \"a\".charCodeAt(0));\n"
     code += "    }\n"
     code += "}\n"
     code += "function hexFromUint(n: number): string {\n"
@@ -103,4 +103,96 @@ def get_message_code(message):
     code += "    }\n"
     code += "}\n"
     
+    return code
+
+
+def decode_for_type(ty):
+    if ty == "uint" or ty == "bool":
+        return "uintFromHex(hex, length_so_far)"
+    elif ty == "int":
+        return "intFromHex(hex, length_so_far)"
+    elif ty == "str":
+        return "strFromHex(hex, length_so_far)"
+    elif ty == "[...]":
+        return "uint8ArrayFromHex(hex, length_so_far)"
+    else:
+        print("Warning: unknown type: " + ty)
+        return "<unknown>"
+
+def get_decode_code(messages):
+    code = ""
+    code += "function numFromSingleHex(s: string, index: number): number {\n"
+    code += "    let code = s.charCodeAt(index);\n"
+    code += "    if (code >= \"0\".charCodeAt(0) && code <= \"9\".charCodeAt(0)) {\n"
+    code += "        return code - \"0\".charCodeAt(0);\n"
+    code += "    } else if (code >= \"a\".charCodeAt(0) && code <= \"f\".charCodeAt(0)) {\n"
+    code += "        return code + 10 - \"a\".charCodeAt(0);\n"
+    code += "    }\n"
+    code += "    throw new Error(\"Not a valid hex: \" + String.fromCharCode(code));\n"
+    code += "}\n"
+    code += "function uintFromHex(s: string, index: number): [number, number] {\n"
+    code += "    return [4, (numFromSingleHex(s, index) << 12) + (numFromSingleHex(s, index + 1) << 8)\n"
+    code += "             + (numFromSingleHex(s, index + 2) << 4) + numFromSingleHex(s, index + 3)];\n"
+    code += "}\n"
+    code += "function intfromHex(s: string, index: number): [number, number] {\n"
+    code += "    let [length, raw] = uintFromHex(s, index);\n"
+    code += "    if (raw & 0x8000) { // negative\n"
+    code += "        return [length, (~0xFFFF) | raw];\n"
+    code += "    } else { // positive\n"
+    code += "        return [length, 0x7FFF & raw];\n"
+    code += "    }\n"
+    code += "}\n"
+    code += "function strFromHex(s: string, index: number): [number, string] {\n"
+    code += "    let result = \"\";\n"
+    code += "    let [total_length, str_length] = uintFromHex(s, index);\n"
+    code += "    if (s.length < total_length + 2 * str_length) throw new Error(\"Can't parse str: not enough hex digits\");\n"
+    code += "    for (let _c = 0; _c < str_length; _c++) {\n"
+    code += "        result += String.fromCharCode((numFromSingleHex(s, index + total_length) << 4)\n"
+    code += "                                    + numFromSingleHex(s, index + total_length + 1));\n"
+    code += "        total_length += 2\n"
+    code += "    }\n"
+    code += "    return [total_length, result];\n"
+    code += "}\n"
+    code += "function uint8ArrayFromHex(s: string, index: number): [number, Uint8Array] {\n"
+    code += "    let result: number[] = [];\n"
+    code += "    let [total_length, array_length] = uintFromHex(s, index);\n"
+    code += "    if (s.length < total_length + 2 * array_length) throw new Error(\"Can't parse [...]: not enough hex digits\");\n"
+    code += "    for (let _c = 0; _c < array_length; _c++) {\n"
+    code += "        result.push((numFromSingleHex(s, index + total_length) << 4)\n"
+    code += "                   + numFromSingleHex(s, index + total_length + 1));\n"
+    code += "        total_length += 2\n"
+    code += "    }\n"
+    code += "    return [total_length, new Uint8Array(result)];\n"
+    code += "}\n"
+
+    # decode(hex)
+    code += "/** `decode()` return the length decoded and the decoded class\n"
+    code += " * \n"
+    code += " * A length of 0 means that there aren't enough bytes to build the type\n"
+    code += " * \n"
+    code += " * A length of -1 indicates an error\n"
+    code += " */\n"
+    code += "export function decode(hex: string): [number, Message | null] {\n"
+    code += "    if (hex.length < 8) return [0, null]; // not enough data\n"
+    code += "    let [l_size, size] = uintFromHex(hex, 0);\n"
+    code += "    let [l_id, id] = uintFromHex(hex, 4);\n"
+    code += "    let length_so_far = l_size + l_id;\n"
+    for m in messages:
+        code += "    if (id == " + m.name + ".ID) {\n"
+        for f in m.fields:
+            code += "        let [l_" + f.name + ", " + f.name + "] = " + decode_for_type(f.ty) + ";\n"
+            code += "        length_so_far += l_" + f.name + ";\n"
+        code += "        if (length_so_far != 2 * size) {\n"
+        code += "            console.error(\"Size mismatch! returning announced size, got \" + length_so_far);\n"
+        code += "        }\n"
+        code += "        return [size, new " + m.name + "("
+        for f in m.fields:
+            code += f.name + ", "
+        if len(m.fields) > 0:
+            code = code[:-2] # remove last `, `
+        code += ")];\n"
+        code += "    }\n"
+    code += "    return [-1, null];\n"
+    code += "}\n"
+
     return code

@@ -94,5 +94,6 @@ import ts_codegen as ts
 ts_code += ts.get_global_code()
 for m in messages:
     ts_code += ts.get_message_code(m)
+ts_code += ts.get_decode_code(messages)
 
 print(ts_code)
