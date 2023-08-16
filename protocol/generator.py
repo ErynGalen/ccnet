@@ -13,7 +13,7 @@ class Message:
 
 
 # main
-protocol_def = open("protocol.def", "r")
+protocol_def = open("protocol.scm", "r")
 
 messages = []
 
