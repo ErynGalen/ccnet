@@ -48,6 +48,12 @@ export class Room {
             });
         }
     }
+
+    forEachPlayer(cb: (local_id: number, global_id: number, socket: WebSocket) => any) {
+        for (let p = 0; p < this.players.length; p++) {
+            cb(this.players[p].local_id, this.players[p].global_id, this.players[p].socket);
+        }
+    }
 }
 
 class PlayerRef {

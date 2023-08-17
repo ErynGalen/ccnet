@@ -20,6 +20,7 @@ if len(sys.argv) != 2:
     print(sys.argv[0] + " [language]")
     print("languages:")
     print("  ts = Typescript")
+    print("  lua = Lua")
     exit()
 
 language = sys.argv[1]
@@ -110,5 +111,12 @@ if language == "ts":
         ts_code += ts.get_message_code(m)
     ts_code += ts.get_decode_code(messages)
     print(ts_code)
+elif language == "lua":
+    lua_code = ""
+    import lua_codegen as lua
+
+    for m in messages:
+        lua_code += lua.get_message_code(m)
+    print(lua_code)
 else:
     print("Unsupported language:", language)

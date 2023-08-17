@@ -39,7 +39,7 @@ ws_server.on('connection', function (socket, _request) {
         let length: number;
         let message = m.decode(str_message);
         if (!message) {
-            console.error("Error decoding message");
+            console.error("Error decoding message", str_message);
             return;
         }
         switch (message.id()) {
@@ -74,6 +74,32 @@ ws_server.on('connection', function (socket, _request) {
                 let room = getRoom(join_message.room_name);
                 let global_id = room.addPlayer(socket, player.local_id, player.name);
                 player.current_room = [room, global_id];
+                break;
+
+            case m.PlayerUpdate.ID:
+                let update_message = message as m.PlayerUpdate;
+                let orig_player: PlayerInfo | null = null;
+                for (let p = 0; p < players.length; p++) {
+                    if (players[p].local_id == update_message.local_id) {
+                        orig_player = players[p];
+                    }
+                }
+                if (!orig_player) {
+                    console.error("Unknown local_id:", update_message.local_id);
+                    break;
+                }
+                if (orig_player.current_room) {
+                    let [orig_room, orig_global_id] = orig_player.current_room;
+                    orig_room.forEachPlayer((local_id, global_id, socket) => {
+                        if (orig_global_id == global_id) {
+                            return;
+                        }
+                        socket.send(new m.PlayerUpdate(local_id, orig_global_id,
+                            update_message.x,
+                            update_message.y,
+                            update_message.spr).serialize());
+                    });
+                }
                 break;
 
             default:

@@ -37,4 +37,6 @@
 (PlayerUpdate
  :local_id number ;; destination/source
  :global_id number ;; player being updated (ignored and set appropriately by the server)
- :data string) ;; temporary
+ :x number
+ :y number
+ :spr number) ;; temporary
