@@ -11,7 +11,7 @@ let local_id = 0;
 
 socket.onopen = function open() {
     log_element.innerHTML += "<div>Connected</div>";
-    socket.send(new m.RequestID("Me!").toHex());
+    socket.send(new m.RequestID("Me!; I'm me; did you know?").serialize());
 }
 socket.onclose = function close() {
     log_element.innerHTML += "<div>Disconnected</div>";
@@ -20,13 +20,14 @@ socket.onerror = function error(err) {
     console.log(err);
 }
 socket.onmessage = function message(event) {
-    let hex_message = event.data;
-    let [len, message] = m.decode(hex_message);
+    let str_message = event.data;
+    log_element.innerHTML += "<div><pre>" + str_message + "</div></pre>";
+    let message = m.decode(str_message);
     switch (message.id()) {
         case m.AssignID.ID:
             log_element.innerHTML += "<div>Local ID: " + message.local_id + "</div>";
             local_id = message.local_id;
-            socket.send(new m.Join(local_id, "test room").toHex());
+            socket.send(new m.Join(local_id, "test room").serialize());
             break;
         case m.AssignGlobalID.ID:
             log_element.innerHTML += "<div>Global ID: " + message.global_id + "</div>";

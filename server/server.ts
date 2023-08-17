@@ -30,28 +30,22 @@ ws_server.on('connection', function (socket, _request) {
         });
     });
     socket.on('message', function (data, _isBinary) {
-        let hex_message: string;
+        let str_message: string;
         if (typeof (data) == "string") {
-            hex_message = data;
+            str_message = data;
         } else {
-            hex_message = data.toString();
+            str_message = data.toString();
         }
         let length: number;
-        let message: m.Message | null;
-        try {
-            [length, message] = m.decode(hex_message);
-        } catch (e) {
-            console.error("Error while decoding " + hex_message + ":", e);
-            return;
-        }
+        let message = m.decode(str_message);
         if (!message) {
-            console.error("Error decoding message: length = " + length);
+            console.error("Error decoding message");
             return;
         }
         switch (message.id()) {
             case m.RequestID.ID:
                 let req_id_message = message as m.RequestID;
-                socket.send(new m.AssignID(next_local_id).toHex());
+                socket.send(new m.AssignID(next_local_id).serialize());
                 players.push(new PlayerInfo(req_id_message.player_name, next_local_id))
                 next_local_id += 1;
                 break;

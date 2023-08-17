@@ -12,16 +12,16 @@ export class Room {
     addPlayer(socket: WebSocket, local_id: number, name: string) {
         this.last_global_id += 1;
         this.players.push(new PlayerRef(this.last_global_id, local_id, socket, name));
-        socket.send(new m.AssignGlobalID(local_id, this.last_global_id).toHex());
+        socket.send(new m.AssignGlobalID(local_id, this.last_global_id).serialize());
 
         for (let p = 0; p < this.players.length; p++) {
             if (this.players[p].global_id != this.last_global_id) {
                 // inform other player
                 this.players[p].socket.send(new m.PlayerInRoom(this.players[p].local_id,
-                    this.last_global_id, 1, name).toHex());
+                    this.last_global_id, 1, name).serialize());
                 // inform new player
                 socket.send(new m.PlayerInRoom(local_id,
-                    this.players[p].global_id, 0, this.players[p].name).toHex());
+                    this.players[p].global_id, 0, this.players[p].name).serialize());
             }
         }
 
@@ -35,7 +35,7 @@ export class Room {
             }
             // inform other player that `global_id` has left
             if (p.socket.readyState == WebSocket.OPEN) {
-                p.socket.send(new m.PlayerLeft(p.local_id, global_id).toHex());
+                p.socket.send(new m.PlayerLeft(p.local_id, global_id).serialize());
             }
             return true;
         });

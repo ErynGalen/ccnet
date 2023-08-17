@@ -2,7 +2,7 @@
 Network protocol for Celeste Classic carts.
 
 ## The protocol
-See [protocol.sch](protocol/protocol.scm) for more informations.
+See [protocol.scm](protocol/protocol.scm) for more informations.
 
 ## Using it
 First, the protocol implementation files must be generated.
