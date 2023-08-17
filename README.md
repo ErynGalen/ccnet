@@ -4,6 +4,10 @@ Network protocol for Celeste Classic carts.
 ## The protocol
 See [protocol.scm](protocol/protocol.scm) for more informations.
 
+## Implementing the protocol in carts
+
+See [PICO-8](pico8/README.md) for more information.
+
 ## Using it
 First, the protocol implementation files must be generated.
 To do so, run `make protocols`.

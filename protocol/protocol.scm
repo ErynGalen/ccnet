@@ -39,4 +39,7 @@
  :global_id number ;; player being updated (ignored and set appropriately by the server)
  :x number
  :y number
- :spr number) ;; temporary
+ :spr number
+ :flip_x bool
+ :flip_y bool
+ :djump number)

@@ -97,7 +97,10 @@ ws_server.on('connection', function (socket, _request) {
                         socket.send(new m.PlayerUpdate(local_id, orig_global_id,
                             update_message.x,
                             update_message.y,
-                            update_message.spr).serialize());
+                            update_message.spr,
+                            update_message.flip_x,
+                            update_message.flip_y,
+                            update_message.djump).serialize());
                     });
                 }
                 break;
