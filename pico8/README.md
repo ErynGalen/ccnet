@@ -31,7 +31,6 @@ function poll_input()
         o.global_id = parts[3]
         o.name = parts[5]
       elseif parts[1] == 6 then -- PlayerLeft
-        local to_remove = {}
         for o in all(objects) do
           if o.global_id == parts[3] then
             del(objects, o)
@@ -40,7 +39,6 @@ function poll_input()
       elseif parts[1] == 7 then -- PlayerUpdate
         for o in all(objects) do
           if o.global_id == parts[3] then
-            _dbg("update")
             o.x = parts[4]
             o.y = parts[5]
             o.spr = parts[6]
@@ -100,10 +98,10 @@ extern_player={
 }
 ```
 
-## Addition to the code
+## Additions to the code
 ### `_init()`
 ```lua
-output_msg("1;name;") -- request ID with name "name"
+output_msg("1;name;") -- RequestID with name "name"
 ```
 ### `_update()`
 ```lua
@@ -111,11 +109,11 @@ poll_input()
 ```
 ### `player.init()`
 ```lua
-output_msg("3;1;evercore_"..lvl_id..";") -- join room
+output_msg("3;1;evercore_"..lvl_id..";") -- Join
 ```
 ### `player.update()`
 ```lua
-output_msg("7;1;"..(this.global_id or 0)..";"..(this.x or 0)..";"..(this.y or 0)..";"..(this.spr or 0)..";"..(this.flip.x and 1 or 0)..";"..(this.flip.y and 1 or 0)..";"..(this.djump or 0)..";") -- player update
+output_msg("7;1;"..(this.global_id or 0)..";"..(this.x or 0)..";"..(this.y or 0)..";"..(this.spr or 0)..";"..(this.flip.x and 1 or 0)..";"..(this.flip.y and 1 or 0)..";"..(this.djump or 0)..";") -- PlayerUpdate
 ```
 ### `kill_player()`
 ```lua
