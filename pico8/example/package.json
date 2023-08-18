@@ -1,0 +1,13 @@
+{
+  "name": "evercore_net",
+  "version": "1.0.0",
+  "description": "A modified version of [Smalleste](https://github.com/CelesteClassic/smalleste) built for modding.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.13.0"
+  }
+}

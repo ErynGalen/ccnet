@@ -105,6 +105,10 @@ extern_player={
 ```lua
 output_msg("1;name;") -- request ID with name "name"
 ```
+### `_update()`
+```lua
+poll_input()
+```
 ### `player.init()`
 ```lua
 output_msg("3;1;evercore_"..lvl_id..";") -- join room
