@@ -20,7 +20,7 @@ def get_global_code():
 def real_type(ty):
     if ty == "number" or ty == "bool":
         return "number"
-    elif ty == "string":
+    elif ty == "string" or ty == "...":
         return "string"
     else:
         print("Warning: unknown type: " + ty)
@@ -31,6 +31,8 @@ def str_for_field(field):
         return "this." + field.name + ".toString() + ';'"
     elif field.ty == "string":
         return "checkedString(this." + field.name + ") + ';'"
+    elif field.ty == "...":
+        return "this." + field.name
     else:
         print("Warning: unknown type: " + field.ty)
         return "<unknown>"
@@ -71,16 +73,19 @@ def get_decode_code(messages):
     code += "    let id = Number(parts[0]);\n"
     for m in messages:
         code += "    if (id == " + m.name + ".ID) {\n"
-        field_n = 1
+        field_n = 0
         for f in m.fields:
+            field_n += 1
             if f.ty == "number" or f.ty == "bool":
                 code += "        let " + f.name + " = Number(parts[" + str(field_n) + "]);\n"
             elif f.ty == "string":
                 code += "        let " + f.name + " = parts[" + str(field_n) + "];\n"
+            elif f.ty == "...":
+                code += "        let " + f.name + " = parts.slice(" + str(field_n) + ").join(';');\n"
+                break # '...' is always the last field
             else:
                 print("Warning: unknown type: " + field.ty)
                 code += "        <unknown>"
-            field_n += 1
         code += "        return new " + m.name + "("
         for f in m.fields:
             code += f.name + ", "
