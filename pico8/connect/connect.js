@@ -1,11 +1,35 @@
 const child_process = require('child_process');
 const ws = require('ws');
 
-const socket = new ws.WebSocket("ws://localhost:7878");
+let cwd = null;
+let command = null;
+let args = [];
+
+let address = null;
+
+let next_is_cwd = false;
+for (let i = 2; i < process.argv.length(); i++) {
+    if (next_is_cwd) {
+        cwd = process.argv[i];
+        next_is_cwd = false;
+    } else if (process.argv[i] == "--cd") {
+        next_is_cwd = true;
+    } else if (address == null) {
+        address = process.argv[i];
+    } else if (command == null) {
+        command = process.argv[i];
+    } else {
+        args.push(process.argv[i]);
+    }
+}
+
+const socket = new ws.WebSocket(address);
 
 //let child = child_process.spawn("pico8", ["carts/evercore.p8"]);
-let child = child_process.spawn("love", [".", "carts/evercore.p8"],
-    { cwd: process.env.HOME + "/projects/Celeste/picolove" });
+//let child = child_process.spawn("love", [".", "carts/evercore.p8"],
+//    { cwd: process.env.HOME + "/projects/Celeste/picolove" });
+let child = child_process.spawn(command, args,
+    { cwd: cwd });
 
 let input_queue = [];
 

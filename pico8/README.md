@@ -1,4 +1,21 @@
+# Connecting a cart to a server
+You can run a cart amd connect it to a server with the utility in [`connect`](connect):
+* in the `connect` directory, run `npm install` to install dependencies (only do it the first time)
+* still in the `connect` directory, run `node connect.js <args>`, where `<args>` is the following:
+
+`<server address> <command> <command arguments>`
+
+`<command>` is the command that will run the cart.
+
+Additionally, you can specify the working directory of the command by passing the argument `--cd <directory>`.
+
+For example:
+```bash
+node connect.js ws://localhost:8080 --cd ~/picolove love . carts/evercore.p8
+```
+
 # The PICO-8 side
+This code manages network in the PICO-8 cart.
 
 ## Global IO code
 ```lua
