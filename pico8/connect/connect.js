@@ -25,9 +25,6 @@ for (let i = 2; i < process.argv.length(); i++) {
 
 const socket = new ws.WebSocket(address);
 
-//let child = child_process.spawn("pico8", ["carts/evercore.p8"]);
-//let child = child_process.spawn("love", [".", "carts/evercore.p8"],
-//    { cwd: process.env.HOME + "/projects/Celeste/picolove" });
 let child = child_process.spawn(command, args,
     { cwd: cwd });
 

@@ -8,6 +8,8 @@ See [protocol.scm](protocol/protocol.scm) for more informations.
 
 See [PICO-8](pico8/README.md) for more information.
 
+There you will also find informations on how to run carts.
+
 ## Using it
 First, the protocol implementation files must be generated.
 To do so, run `make protocols`.
