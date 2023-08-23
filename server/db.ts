@@ -34,7 +34,7 @@ export class Room {
     }
 
     removePlayer(global_id: number) {
-        this.players = this.players.filter(function (p) {
+        this.players = this.players.filter((p) => {
             if (p.global_id == global_id) {
                 this.free_global_ids.push(global_id);
                 return false;
@@ -49,7 +49,7 @@ export class Room {
             let this_name = this.name;
             // remove this room from the ROOMS list
             console.log("Removing " + this_name);
-            ROOMS = ROOMS.filter(function (room) {
+            ROOMS = ROOMS.filter((room) => {
                 return room.name != this_name;
             });
         }

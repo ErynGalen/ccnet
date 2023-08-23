@@ -26,7 +26,7 @@ ws_server.on('connection', function (socket, _request) {
     });
 
     socket.on('close', function (_code, _reason) {
-        players.forEach(function (p, _index, _array) {
+        players.forEach((p, _index, _array) => {
             if (p.current_room) {
                 p.current_room[0].removePlayer(p.current_room[1])
             }
