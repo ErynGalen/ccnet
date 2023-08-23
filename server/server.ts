@@ -2,7 +2,10 @@ import { WebSocket, WebSocketServer } from "ws";
 import * as m from "./message.js";
 import { Room, getRoom } from "./db.js";
 
-const ws_server = new WebSocketServer({ port: 7878 });
+const port = Number(process.env.PORT);
+const ws_server = new WebSocketServer({ port: port }, function () {
+    console.log(`Server running on port ${port}.`);
+});
 
 class PlayerInfo {
     name: string;
