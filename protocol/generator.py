@@ -99,6 +99,14 @@ message_id = 1
 for m in messages:
     m.uid = message_id
     message_id += 1
+    last_field_seen = False
+    for f in m.fields:
+        if last_field_seen:
+            print("protocol.def:")
+            print(" in message " + m.name + ": only the last field of a message can have type '...'")
+            exit()
+        if f.ty == "...":
+            last_field_seen = True
 
 
 # codegen

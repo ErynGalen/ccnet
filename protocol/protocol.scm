@@ -37,9 +37,10 @@
 (PlayerUpdate
  :local_id number ;; destination/source
  :global_id number ;; player being updated (ignored and set appropriately by the server)
- :x number
- :y number
- :spr number
- :flip_x bool
- :flip_y bool
- :djump number)
+ :data ...)
+;; :x number
+;; :y number
+;; :spr number
+;; :flip_x bool
+;; :flip_y bool
+;; :djump number)
