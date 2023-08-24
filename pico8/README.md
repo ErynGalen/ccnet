@@ -18,6 +18,10 @@ node connect.js ws://localhost:8080 --cd ~/picolove love . carts/evercore.p8
 This code manages network in the PICO-8 cart.
 
 ## Global IO code
+### Web
+> **Note** TODO: the web version isn't done yet.
+
+### Standalone
 ```lua
 chars=" !\"#$%&'()*+,-./0123456789:;<=>?@abcdefghijklmnopqrstuvwxyz[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 s2c={} c2s={}
@@ -118,6 +122,8 @@ extern_player={
 
 ## Additions to the code
 ### `_init()`
+Replace `name` with your player name
+
 ```lua
 output_msg("1;name;") -- RequestID with name "name"
 ```
@@ -126,8 +132,9 @@ output_msg("1;name;") -- RequestID with name "name"
 poll_input()
 ```
 ### `player.init()`
+Replace `cartname` with a name identifying uniquely a cart.
 ```lua
-output_msg("3;1;evercore_"..lvl_id..";") -- Join
+output_msg("3;1;cartname_"..lvl_id..";") -- Join
 ```
 ### `player.update()`
 ```lua
