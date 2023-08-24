@@ -18,3 +18,7 @@ Then, in the `server` directory:
 * install dependencies by running `npm install`
 * compile Typescript files by running `npx tsc`
 * run `npm run server`
+
+## Acknowledgements
+* This project is inspired by [classicnet](https://github.com/EvergreenGames/EvergreenGames.github.io/tree/master/classicnet).
+* Special thanks to [Ruby](https://github.com/EvergreenGames) and [Pablito](https://github.com/probablypablito) for the PICO-8 code, the inspiration and the rest of `classicnet`.
