@@ -62,6 +62,7 @@ function poll_input()
             o.flip.x = parts[7] == 1
             o.flip.y = parts[8] == 1
             o.djump = parts[9]
+            o.dash_time = parts[10]
           end
         end
       end
@@ -130,7 +131,7 @@ output_msg("3;1;evercore_"..lvl_id..";") -- Join
 ```
 ### `player.update()`
 ```lua
-output_msg("7;1;"..(this.global_id or 0)..";"..(this.x or 0)..";"..(this.y or 0)..";"..(this.spr or 0)..";"..(this.flip.x and 1 or 0)..";"..(this.flip.y and 1 or 0)..";"..(this.djump or 0)..";") -- PlayerUpdate
+output_msg("7;1;"..(this.global_id or 0)..";"..(this.x or 0)..";"..(this.y or 0)..";"..(this.spr or 0)..";"..(this.flip.x and 1 or 0)..";"..(this.flip.y and 1 or 0)..";"..(this.djump or 0)..";"..(this.dash_time or 0)..";") -- PlayerUpdate
 ```
 ### `kill_player()`
 ```lua
