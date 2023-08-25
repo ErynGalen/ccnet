@@ -17,6 +17,8 @@ node connect.js ws://localhost:8080 --cd ~/picolove love . carts/evercore.p8
 # The PICO-8 side
 This code manages network in the PICO-8 cart.
 
+It is adapted for Evercore-based carts, so it is given as a mere example of how the protocol can be implemented.
+
 ## Global IO code
 ### Web
 > **Note** TODO: the web version isn't done yet.
@@ -32,6 +34,8 @@ for i=1,95 do
   s2c[s]=c
 end
 
+connected = false
+
 function poll_input()
   output_msg("f")
    while true do
@@ -41,7 +45,9 @@ function poll_input()
       end
       -- process message
       local parts = split(msg, ";")
-      if parts[1] == 4 then -- AssignGlobalID
+      if parts[1] == 2 then -- AssignID
+        connected = true
+      elseif parts[1] == 4 then -- AssignGlobalID
          for o in all(objects) do
             if o.type == player then
                o.global_id = parts[3]
@@ -67,6 +73,10 @@ function poll_input()
             o.flip.y = parts[8] == 1
             o.djump = parts[9]
             o.dash_time = parts[10]
+            if not o.hair then
+              create_hair(o)
+            end
+            o.show = true
           end
         end
       end
@@ -103,7 +113,7 @@ end
 extern_player={
   init=function (this)
     this.dash_time=0
-    create_hair(this)
+    this.show = false
   end,
   update=function(this)
     if this.dash_time > 0 then
@@ -111,6 +121,7 @@ extern_player={
     end
   end,
   draw=function(this)
+    if not this.show then return end
     set_hair_color(this.djump)
     draw_hair(this)
     spr(this.spr,this.x,this.y,1,1,this.flip.x,this.flip.y)
@@ -130,6 +141,12 @@ output_msg("1;name;") -- RequestID with name "name"
 ### `_update()`
 ```lua
 poll_input()
+```
+### `_draw()`
+```lua
+if not connected and not is_title() then
+  ?"not connected",3,120,8
+end
 ```
 ### `player.init()`
 Replace `cartname` with a name identifying uniquely a cart.

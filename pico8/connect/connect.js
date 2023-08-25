@@ -8,7 +8,7 @@ let args = [];
 let address = null;
 
 let next_is_cwd = false;
-for (let i = 2; i < process.argv.length(); i++) {
+for (let i = 2; i < process.argv.length; i++) {
     if (next_is_cwd) {
         cwd = process.argv[i];
         next_is_cwd = false;
