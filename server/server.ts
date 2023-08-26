@@ -98,6 +98,26 @@ ws_server.on('connection', function (socket, _request) {
             }
             return;
         }
+        // TODO: merge with PlayerUpdate code?
+        if (mid == m.PlayerEvent.ID) {
+            let event_message = message as m.PlayerEvent;
+            let player = player_from_local_id(event_message.local_id);
+            if (!player) {
+                return;
+            }
+            if (player.current_room) {
+                let [room, global_id] = player.current_room;
+                room.forEachPlayer((other_local_id, other_global_id, socket) => {
+                    if (other_global_id == global_id) {
+                        return;
+                    }
+                    socket.send(new m.PlayerEvent(other_local_id, global_id,
+                        event_message.event,
+                        event_message.data).serialize());
+                });
+            }
+            return;
+        }
     });
 });
 

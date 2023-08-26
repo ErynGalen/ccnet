@@ -97,3 +97,11 @@ def get_decode_code(messages):
     code += "}\n"
 
     return code
+
+def get_enum_code(enum):
+    code = ""
+    code += "export const " + enum.name + " = {\n"
+    for v in enum.variants:
+        code += "    " + v.name + ": " + str(v.uid) + ",\n"
+    code += "};\n"
+    return code

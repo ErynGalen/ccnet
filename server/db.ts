@@ -41,7 +41,7 @@ export class Room {
             }
             // inform other player that `global_id` has left
             if (p.socket.readyState == WebSocket.OPEN) {
-                p.socket.send(new m.PlayerLeft(p.local_id, global_id).serialize());
+                p.socket.send(new m.PlayerEvent(p.local_id, global_id, m.player_event.PlayerLeft, "").serialize());
             }
             return true;
         });

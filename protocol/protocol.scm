@@ -30,17 +30,17 @@
  :is_new bool
  :player_name string)
 
-(PlayerLeft
-  :local_id number ;; destination
-  :global_id number) ;; player that has left
+(PlayerEvent
+ :local_id number ;; destination
+ :global_id number ;; player the even is coming from
+ :event number ;; id of the event
+ :data ...) ;; optional data for the event
+[player_event
+ :PlayerLeft
+ :PlayerSpawn
+ :PlayerDeath]
 
 (PlayerUpdate
  :local_id number ;; destination/source
  :global_id number ;; player being updated (ignored and set appropriately by the server)
  :data ...)
-;; :x number
-;; :y number
-;; :spr number
-;; :flip_x bool
-;; :flip_y bool
-;; :djump number)

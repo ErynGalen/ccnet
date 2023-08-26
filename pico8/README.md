@@ -56,11 +56,41 @@ function poll_input()
       elseif parts[1] == 5 then -- PlayerInRoom
         local o = init_object(extern_player, 5, 5)
         o.global_id = parts[3]
+        if parts[4] == 0 then -- player was already there
+          o.show = true
+        end
         o.name = parts[5]
-      elseif parts[1] == 6 then -- PlayerLeft
-        for o in all(objects) do
-          if o.global_id == parts[3] then
-            del(objects, o)
+      elseif parts[1] == 6 then -- PlayerEvent
+        if parts[4] == 0 then -- PlayerLeft
+          for o in all(objects) do
+            if o.global_id == parts[3] then
+              del(objects, o)
+            end
+          end
+        elseif parts[4] == 1 then -- PlayerSpawn
+          for o in all(objects) do
+            if o.global_id == parts[3] then
+              o.x = parts[5]
+              o.y = parts[6]
+              o.show = true
+              create_hair(o)
+            end
+          end
+        elseif parts[4] == 2 then -- PlayerDeath
+          for o in all(objects) do
+            if o.global_id == parts[3] then
+              o.show = false
+              -- death animation
+              for dir=0,0.875,0.125 do
+                add(dead_particles,{
+                  x=o.x+4,
+                  y=o.y+4,
+                  t=5,
+                  dx=sin(dir)*3,
+                  dy=cos(dir)*3
+                })
+              end
+            end
           end
         end
       elseif parts[1] == 7 then -- PlayerUpdate
@@ -76,7 +106,6 @@ function poll_input()
             if not o.hair then
               create_hair(o)
             end
-            o.show = true
           end
         end
       end
@@ -114,6 +143,7 @@ extern_player={
   init=function (this)
     this.dash_time=0
     this.show = false
+    this.persist = true
   end,
   update=function(this)
     if this.dash_time > 0 then
@@ -144,20 +174,44 @@ poll_input()
 ```
 ### `_draw()`
 ```lua
-if not connected and not is_title() then
+if not connected then
   ?"not connected",3,120,8
 end
 ```
-### `player.init()`
+### `load_level()`
+At the beginning of the function:
+```lua
+if id ~= lvl_id then
+  foreach(objects,function(o)
+    o.persist = nil
+  end)
+end
+```
 Replace `cartname` with a name identifying uniquely a cart.
 ```lua
-output_msg("3;1;cartname_"..lvl_id..";") -- Join
+output_msg("3;1;cartname_"..id..";") -- Join
+```
+Also, replace
+```lua
+foreach(objects,destroy_object)
+```
+by
+```lua
+foreach(objects,function(o)
+  if not o.persist then
+    destroy_object(o)
+  end
+end)
+```
+### `player.init()`
+```lua
+output_msg("6;1;0;1;"..(this.x or 0)..";"..(this.y or 0)..";") -- PlayerEvent::PlayerSpawn
 ```
 ### `player.update()`
 ```lua
-output_msg("7;1;"..(this.global_id or 0)..";"..(this.x or 0)..";"..(this.y or 0)..";"..(this.spr or 0)..";"..(this.flip.x and 1 or 0)..";"..(this.flip.y and 1 or 0)..";"..(this.djump or 0)..";"..(this.dash_time or 0)..";") -- PlayerUpdate
+output_msg("7;1;0;"..(this.x or 0)..";"..(this.y or 0)..";"..(this.spr or 0)..";"..(this.flip.x and 1 or 0)..";"..(this.flip.y and 1 or 0)..";"..(this.djump or 0)..";"..(this.dash_time or 0)..";") -- PlayerUpdate
 ```
 ### `kill_player()`
 ```lua
-output_msg("3;1;;") -- leave room
+output_msg("6;1;0;2;") -- PlayerEvent::PlayerDeath
 ```
