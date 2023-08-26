@@ -1,4 +1,20 @@
 * {
     background-color: black;
+    color: white;
+}
+h1, h2, h3, h4, h5, h6 {
     color: lightcoral;
+}
+a {
+    color: lightblue;
+}
+div {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+code {
+    margin-left: 5px;
+    margin-right: 5px;
+    font-size: 1.1em;
 }
