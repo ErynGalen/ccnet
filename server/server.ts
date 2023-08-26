@@ -1,11 +1,56 @@
 import { WebSocket, WebSocketServer } from "ws";
+import http from 'http';
+import fs from 'fs/promises';
+import mime from 'mime';
 import * as m from "./message.js";
 import { Room, getRoom } from "./db.js";
 
+// HTTP
+
 const port = Number(process.env.PORT);
-const ws_server = new WebSocketServer({ port: port }, function () {
-    console.log(`Server running on port ${port}.`);
+const http_server = http.createServer(async function (req: http.IncomingMessage, res: http.ServerResponse) {
+    if (req.url) {
+        let file_name = req.url;
+        if (file_name == '/' || file_name == '') {
+            file_name = "/index.html";
+        }
+        let file: Buffer;
+        try {
+            let file_url = new URL("../web" + file_name, import.meta.url);
+            // console.log("Request for", file_url.pathname);
+            file = await fs.readFile(file_url.pathname);
+        } catch (e) {
+            // console.error("Can't serve request for", req.url, ":", e);
+            res.statusCode = 404;
+            res.end();
+            return;
+        }
+        let mime_ty = mime.getType(file_name);
+        if (!mime_ty) {
+            mime_ty = "application/octet-stream";
+        }
+        res.setHeader('Content-Type', mime_ty);
+
+        res.end(file);
+    }
+    res.statusCode = 501;
+    res.end();
 });
+
+http_server.listen(port, '0.0.0.0', function () {
+    console.log(`Listening on port ${port}`);
+});
+
+// Websocket
+
+const ws_server = new WebSocketServer({ noServer: true });
+
+http_server.on('upgrade', (req, socket, head) => {
+    ws_server.handleUpgrade(req, socket, head, function (client, req) {
+        ws_server.emit('connection', client, req);
+    });
+});
+
 
 class PlayerInfo {
     name: string;
