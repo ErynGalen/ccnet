@@ -11,7 +11,11 @@
             if (location.hostname.includes("localhost")) {
                 protocol = 'ws://';
             }
-            return protocol + location.hostname + ':' + location.port;
+            let port = "";
+            if (location.port != '') {
+                port = ':' + location.port;
+            }
+            return protocol + location.hostname + port + '/';
         }
         function fillServerAddress() {
             let elem = document.getElementById("server_address");
