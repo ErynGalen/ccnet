@@ -9,6 +9,9 @@ You can run a cart amd connect it to a server with the utility in [`connect`](co
 
 Additionally, you can specify the working directory of the command by passing the argument `--cd <directory>`.
 
+You can specify your name by passing the argument `--name <your name>`.
+The name cannot contain uppercase letters or `;`.
+
 For example:
 ```bash
 node connect.js ws://localhost:8080 --cd ~/picolove love . carts/evercore.p8
@@ -189,7 +192,9 @@ end
 ```
 Replace `cartname` with a name identifying uniquely a cart.
 ```lua
-output_msg("3;1;cartname_"..id..";") -- Join
+if not is_title() then
+  output_msg("3;1;cartname_"..id..";") -- Join
+end
 ```
 Also, replace
 ```lua

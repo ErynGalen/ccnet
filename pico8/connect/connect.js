@@ -6,14 +6,21 @@ let command = null;
 let args = [];
 
 let address = null;
+let name = null;
 
 let next_is_cwd = false;
+let next_is_name = false;
 for (let i = 2; i < process.argv.length; i++) {
     if (next_is_cwd) {
         cwd = process.argv[i];
         next_is_cwd = false;
+    } else if (next_is_name) {
+        name = process.argv[i];
+        next_is_name = false;
     } else if (process.argv[i] == "--cd") {
         next_is_cwd = true;
+    } else if (process.argv[i] == "--name") {
+        next_is_name = true;
     } else if (address == null) {
         address = process.argv[i];
     } else if (command == null) {
@@ -21,6 +28,25 @@ for (let i = 2; i < process.argv.length; i++) {
     } else {
         args.push(process.argv[i]);
     }
+}
+if (name) {
+    for (let c = 0; c < name.length; c++) {
+        if (name.charCodeAt(c) >= 'A'.charCodeAt(0) && name.charCodeAt(c) <= 'Z'.charCodeAt(0)) {
+            console.log("Player name cannot contain uppercase letters");
+            process.exit();
+        }
+    }
+    name = name.replaceAll(';', ',');
+}
+
+function patchOutput(str) {
+    let parts = str.split(';');
+    if (parts[0] == 1) { // RequestID
+        if (name) {
+            parts[1] = name // replace name
+        }
+    }
+    return parts.join(';');
 }
 
 const socket = new ws.WebSocket(address);
@@ -33,11 +59,13 @@ let input_queue = [];
 child.stdout.on('data', function (chunk) {
     let lines = chunk.toString().split("\n");
     for (let l = 0; l < lines.length; l++) {
-        if (lines[l] == ":f") {
+        if (lines[l][0] == '=') {
+            console.log(lines[l]);
+        } else if (lines[l] == ":f") {
             writeAll();
         } else if (lines[l][0] == ":") {
             if (socket.readyState == ws.OPEN) {
-                socket.send(lines[l].slice(1));
+                socket.send(patchOutput(lines[l].slice(1)));
             } else {
                 console.error("Socket isn't open");
             }
