@@ -26,10 +26,23 @@
 </head>
 
 <body onload="fillServerAddress()">
-    <div>CCnet!</div>
+    <h1>CCnet!</h1>
     <div>Server address (click to copy):
         <pre id="server_address" onclick="navigator.clipboard.writeText(getServerAddress())"></pre>
     </div>
+    <h2>Guide</h2>
+    <div>First, download <a href="https://github.com/ErynGalen/ccnet/blob/master/pico8">this folder</a>. You must also install NodeJS and <pre>npm</pre></div>
+    <div>Then, in the <pre>connect</pre> subfolder, run <pre>npm install<pre> to install the required dependencies.</div>
+    <div>Now you can use the <pre>connect.js</pre> utility to connect to the server
+        (address is <a href="#server_address">there</a>):</div>
+    <div>The command is:</div>
+    <pre>node connect.js <em>server address</em> <em>command...</em></pre>
+    <div>You can also use <pre>--cd <em>directory</em></pre> to set the directory the command will run in.</div>
+    <div>Similarly, you can choose your player name with the option <pre>--name <em>name</em></pre>.</div>
+    <div><pre><em>command...</em></pre> is the command that will run the cart.<br>
+        For example, you could have it <pre>pico8 <em>cartname.p8</em></pre></div>
+    <div>Example command:</div>
+    <pre>node connect.js ws://localhost:8080 --cd ~/picolove love . carts/evercore.p8/<pre>
     <hr>
     <div>Main repository: <a href="https://github.com/ErynGalen/ccnet/">CCNet</a></div>
 </body>
