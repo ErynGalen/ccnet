@@ -131,11 +131,10 @@ function output_msg(str)
    poke(0x4300, s2c[":"])
    serial(0x805, 0x4300, 1)
    for i = 1, #str do
-      poke(0x4300, s2c[str:sub(i, i)])
+      poke(0x4300, s2c[sub(str, i, i)])
       serial(0x805, 0x4300, 1)
    end
-   poke(0x4300, 0x0a) -- LF
-   serial(0x805, 0x4300, 1)
+   printh("") -- print LF + flush stdout
 end
 
 ```
