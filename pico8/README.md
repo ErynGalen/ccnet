@@ -190,7 +190,8 @@ if id ~= lvl_id then
   end)
 end
 ```
-Replace `cartname` with a name identifying uniquely a cart.
+After `lvl_id=id`:
+(replace `cartname` with a name identifying uniquely a cart)
 ```lua
 if not is_title() then
   output_msg("3;1;cartname_"..id..";") -- Join
