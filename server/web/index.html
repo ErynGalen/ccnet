@@ -19,8 +19,14 @@
         }
         function fillServerAddress() {
             let elem = document.getElementById("server_address");
-            let addr = getServerAddress()
+            let addr = getServerAddress();
             elem.innerHTML = "<a>" + addr + "</a>";
+            let cart_pages = Array.from(document.getElementsByClassName("cart_page"));
+            for (let i = 0; i < cart_pages.length; i++) {
+                let link = cart_pages[i].getAttribute("href");
+                link += "?server=" + addr;
+                cart_pages[i].setAttribute("href", link);
+            }
         }
     </script>
 </head>

@@ -10,24 +10,32 @@ import { Room, getRoom } from "./db.js";
 const port = Number(process.env.PORT);
 const http_server = http.createServer(async function (req: http.IncomingMessage, res: http.ServerResponse) {
     if (req.url) {
-        let file_name = req.url;
-        if (file_name == '/' || file_name == '') {
-            file_name = "/index.html";
+        let url;
+        try {
+            url = new URL("../web" + req.url, import.meta.url);
+        } catch (e) {
+            res.statusCode = 404;
+            res.end("Couldn't creat URL for " + req.url);
+            return
+        }
+        console.log("request: " + url.pathname);
+        if (url.pathname == '/' || url.pathname == '') {
+            url.pathname = "/index.html";
         }
         let file: Buffer;
         try {
-            let file_url = new URL("../web" + file_name, import.meta.url);
             // console.log("Request for", file_url.pathname);
-            file = await fs.readFile(file_url.pathname);
+            file = await fs.readFile(url.pathname);
         } catch (e) {
             // console.error("Can't serve request for", req.url, ":", e);
             res.statusCode = 404;
             res.end();
             return;
         }
-        let mime_ty = mime.getType(file_name);
+        let mime_ty = mime.getType(url.pathname);
         if (!mime_ty) {
             mime_ty = "application/octet-stream";
+            console.log("Couldn't get mime type for", url.pathname);
         }
         res.setHeader('Content-Type', mime_ty);
 
